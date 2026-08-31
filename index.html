@@ -109,12 +109,13 @@
   }
 
   /* ---------- Layout ---------- */
+  /* Nav is currently commented out, so .wrap is a plain block (not a grid)
+     to keep it aligned with header. If you bring the nav back, restore:
+     display:grid; grid-template-columns:220px 1fr; gap:0;
+     and remove the "grid-column:2" override on main below. */
   .wrap{
-    display:grid;
-    grid-template-columns:220px 1fr;
     max-width:1180px;
     margin:0 auto;
-    gap:0;
   }
   nav.index{
     position:sticky;
@@ -168,9 +169,7 @@
     color:var(--teal);
   }
 
-  /* main pinned to column 2 so it stays put whether or not nav is in the DOM */
   main{
-    grid-column:2;
     padding:40px 32px 120px;
     min-width:0;
   }
@@ -304,8 +303,6 @@
   footer a:hover{text-decoration:underline;}
 
   @media (max-width:860px){
-    .wrap{grid-template-columns:1fr;}
-    main{grid-column:1;}
     nav.index{
       position:static;
       height:auto;
