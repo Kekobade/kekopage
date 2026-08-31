@@ -24,8 +24,49 @@
     color:var(--paper);
     font-family:monospace, monospace;
     line-height:1.3;
+    position:relative;
+    overflow-x:hidden;
   }
   a{color:inherit;}
+
+  /* ---------- background animation ---------- */
+  #stars{
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index:0;
+  }
+  .star{
+    position:absolute;
+    background:var(--paper-dim);
+    border-radius:50%;
+    animation:twinkle 3s infinite ease-in-out;
+  }
+  @keyframes twinkle{
+    0%,100%{opacity:.12;}
+    50%{opacity:.85;}
+  }
+  .glow{
+    position:fixed;
+    top:-120px; right:-120px;
+    width:380px; height:380px;
+    border-radius:50%;
+    background:radial-gradient(circle at 40% 40%, rgba(101,115,131,.35), rgba(101,115,131,0) 70%);
+    z-index:0;
+    pointer-events:none;
+    animation:drift 12s ease-in-out infinite;
+  }
+  @keyframes drift{
+    0%,100%{transform:translate(0,0);}
+    50%{transform:translate(-30px,40px);}
+  }
+
+  /* content sits above the animated background */
+  header, .wrap, footer{
+    position:relative;
+    z-index:1;
+  }
 
   /* ---------- Header ---------- */
   header{
@@ -127,7 +168,9 @@
     color:var(--teal);
   }
 
+  /* main pinned to column 2 so it stays put whether or not nav is in the DOM */
   main{
+    grid-column:2;
     padding:40px 32px 120px;
     min-width:0;
   }
@@ -262,6 +305,7 @@
 
   @media (max-width:860px){
     .wrap{grid-template-columns:1fr;}
+    main{grid-column:1;}
     nav.index{
       position:static;
       height:auto;
@@ -281,14 +325,18 @@
 </head>
 <body>
 
+<div id="stars"></div>
+<div class="glow"></div>
+
 <header>
   <div class="kicker">// personal drawer — bookmarks &amp; backups</div>
   <h1>Welcome, My Friend...</h1>
   <p class="sub">This is Keko's website — personal stuff to share, plus bookmarks and a backup of K3nji's home page. Every link opens in a new tab.</p>
   <p class="note">Don't think it's a copy of K3nji's website — it's only for personal stuff to share, or personal bookmarks and a backup of K3nji's home website. (With no hate)</p>
 </header>
-<!--
+
 <div class="wrap">
+<!--
   <nav class="index" id="indexNav">
     <div class="drawer-label">Drawers</div>
     <ol>
@@ -299,6 +347,7 @@
     </ol>
   </nav>
 -->
+  <main>
 
     <!-- PEOPLE -->
     <section class="category" id="people">
@@ -316,7 +365,7 @@
         -->
         <a class="card" href="https://k3nji.qzz.io/" target="_blank" rel="noopener noreferrer">
           <div class="card-top"><span class="card-title">k3nji Website<span class="arrow">↗</span></span></div>
-          <div class="card-desc">Real Man for me!!! (i don't have to forget about this guy but i can't share the actual profile </3)</div>
+          <div class="card-desc">Real Man for me!!! (i don't have to forget about this guy but i can't share the actual profile &lt;/3)</div>
         </a>
         <a class="card" href="https://daniel.micay.dev/" target="_blank" rel="noopener noreferrer">
           <div class="card-top"><span class="card-title">Daniel Micay <span class="arrow">↗</span></span></div>
@@ -357,7 +406,7 @@
         <span class="cat-count">most-used tools, privacy stuff too</span>
       </div>
       <div class="grid">
-                <!-- "Format"
+        <!-- "Format"
         <a class="card" href="(Link)" target="_blank" rel="noopener noreferrer">
           <div class="card-top"><span class="card-title">(Name of certain thing)<span class="arrow">↗</span></span></div>
           <div class="card-desc">(Details)</div>
@@ -405,15 +454,15 @@
         </a>
         <a class="card" href="https://www.clementine-player.org/" target="_blank" rel="noopener noreferrer">
           <div class="card-top"><span class="card-title">Clementine-player<span class="arrow">↗</span></span></div>
-          <div class="card-desc">Music PLayer For Windows/Linux</div>
+          <div class="card-desc">Music player for Windows/Linux</div>
         </a>
         <a class="card" href="https://play.google.com/store/apps/details?id=in.krosbits.musicolet&pcampaignid=web_share" target="_blank" rel="noopener noreferrer">
-          <div class="card-top"><span class="card-title">musicole Music Player<span class="arrow">↗</span></span></div>
-          <div class="card-desc">Music Player For andriod/ Simple to use and VLC Type Of music PLayer <3</div>
+          <div class="card-top"><span class="card-title">musicolet Music Player<span class="arrow">↗</span></span></div>
+          <div class="card-desc">Music player for Android, simple to use and VLC type of music player &lt;3</div>
         </a>
         <a class="card" href="https://spicetify.app/" target="_blank" rel="noopener noreferrer">
           <div class="card-top"><span class="card-title">Spicetify<span class="arrow">↗</span></span></div>
-          <div class="card-desc">The ultimate Spotify customization toolkit </div>
+          <div class="card-desc">The ultimate Spotify customization toolkit</div>
         </a>
       </div>
     </section>
@@ -459,6 +508,23 @@
 </footer>
 
 <script>
+  // starfield background
+  const starsContainer = document.getElementById('stars');
+  const STAR_COUNT = 90;
+  for (let i = 0; i < STAR_COUNT; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2 + 1;
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.animationDelay = (Math.random() * 3) + 's';
+    s.style.animationDuration = (2 + Math.random() * 3) + 's';
+    starsContainer.appendChild(s);
+  }
+
+  // active-section highlight in the nav (safe to leave in even while nav is commented out)
   const sections = document.querySelectorAll('section.category');
   const navLinks = document.querySelectorAll('nav.index a');
   const map = {};
