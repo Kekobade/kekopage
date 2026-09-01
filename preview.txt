@@ -37,3 +37,74 @@
     overflow:hidden;
     text-overflow:ellipsis;
   }
+
+
+
+
+  // active-section highlight in the nav (safe to leave in even while nav is commented out)
+  const sections = document.querySelectorAll('section.category');
+  const navLinks = document.querySelectorAll('nav.index a');
+  const map = {};
+  navLinks.forEach(l => map[l.getAttribute('href').slice(1)] = l);
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const link = map[entry.target.id];
+      if (!link) return;
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
+
+  // ---- link hover preview (pops out beside the hovered card, uses your own stored images) ----
+  const preview = document.getElementById('link-preview');
+  const previewImg = document.getElementById('link-preview-img');
+  const previewLabel = document.getElementById('link-preview-label');
+  let hideTimer = null;
+
+  function positionPreviewBeside(cardEl){
+    const rect = cardEl.getBoundingClientRect();
+    const gap = 14;
+    const w = preview.offsetWidth;
+    const h = preview.offsetHeight;
+
+    // default: pop out to the RIGHT of the card
+    let left = rect.right + gap;
+    // flip to the LEFT if there isn't room on the right
+    if (left + w > window.innerWidth - 8) {
+      left = rect.left - gap - w;
+    }
+    // vertically centered on the card, clamped to the viewport
+    let top = rect.top + (rect.height / 2) - (h / 2);
+    if (top < 8) top = 8;
+    if (top + h > window.innerHeight - 8) top = window.innerHeight - h - 8;
+
+    preview.style.left = left + 'px';
+    preview.style.top = top + 'px';
+  }
+
+  document.querySelectorAll('a.card[data-preview], a.social-card[data-preview]').forEach(link => {
+    const imgSrc = link.getAttribute('data-preview');
+    if (!imgSrc) return;
+    const label = link.querySelector('.card-title, span')?.textContent?.trim() || '';
+
+    link.addEventListener('mouseenter', () => {
+      clearTimeout(hideTimer);
+      previewImg.src = imgSrc;
+      previewLabel.textContent = label;
+      positionPreviewBeside(link);
+      preview.classList.add('show');
+      // auto-hide after ~2.5s even if still hovering
+      hideTimer = setTimeout(() => preview.classList.remove('show'), 2500);
+    });
+
+    link.addEventListener('mouseleave', () => {
+      clearTimeout(hideTimer);
+      preview.classList.remove('show');
+    });
+  });
+</script>
