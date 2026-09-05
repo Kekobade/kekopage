@@ -220,10 +220,6 @@
   }
 
   /* ---------- LayTwin ---------- */
-  /* Nav is currently commented out, so .wrap is a plain block (not a grid)
-     to keep it aligned with header. If you bring the nav back, restore:
-     display:grid; grid-template-columns:220px 1fr; gap:0;
-     and remove the "grid-column:2" override on main below. */
   .wrap{
     max-width:1180px;
     margin:0 auto;
@@ -463,6 +459,70 @@
     nav.index a::before{display:none;}
     nav.index a{padding:6px 10px;background:var(--panel);border-radius:20px;}
   }
+
+  /* ---------- Music Player (matches site's night/panel/teal palette) ---------- */
+  .nso-player{
+    display:flex;
+    gap:16px;
+    max-width:420px;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:8px;
+    padding:16px;
+    font-family:var(--mono);
+    box-shadow:0 0 24px rgba(0,0,0,.25);
+  }
+  .nso-art{
+    width:70px; height:70px;
+    object-fit:cover;
+    border:1px solid var(--panel-border);
+    border-radius:6px;
+    flex-shrink:0;
+    background:var(--night2);
+  }
+  .nso-body{flex:1; min-width:0; color:var(--text);}
+  .nso-title{
+    font-size:14px; font-weight:600;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    color:var(--paper);
+  }
+  .nso-sub{font-size:11px; color:var(--paper-dim); margin-bottom:10px;}
+  .nso-sub span{color:var(--link);}
+  .nso-bar-row{margin-bottom:8px;}
+  .nso-bar-row input[type="range"]{
+    width:100%; height:4px;
+    accent-color:var(--link);
+    background:transparent;
+  }
+  .nso-controls-row{
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .nso-controls{display:flex; gap:12px;}
+  .nso-controls button{
+    background:none; border:none; cursor:pointer;
+    font-size:14px; color:var(--paper-dim);
+    transition:color .15s ease;
+  }
+  .nso-controls button:hover{color:var(--link-hover);}
+  .nso-controls button.active{color:var(--link);}
+  .nso-time{font-size:11px; color:var(--paper-dim);}
+
+  @media (max-width:860px){
+    nav.index{
+      position:static;
+      height:auto;
+      border-right:none;
+      border-bottom:1px solid var(--thread);
+      padding:24px 20px;
+    }
+    nav.index ol{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    nav.index a::before{display:none;}
+    nav.index a{padding:6px 10px;background:var(--panel);border-radius:20px;}
+  }
 </style>
 </head>
 <body>
@@ -646,10 +706,10 @@
       </div>
     </section>
 
-    <!-- PLayer -->
+        <!-- PLayer -->
          <section class="category" id="Random-PLayer">
       <div class="cat-head">
-        <h2>PLayer</h2>
+        <h2>Video Player</h2>
         <span class="cat-count">Random Vids</span>
       </div>
 
@@ -666,7 +726,40 @@
     </iframe>
   </div>
 </div>
+ </section>
 
+    <!-- Music PLayer -->
+    <section class="category" id="Random-PLayer">
+      <div class="cat-head">
+        <h2>Music Player</h2>
+        <span class="cat-count">Songs I Like</span>
+      </div>
+
+      <div class="nso-player">
+        <img id="track-art" class="nso-art" src="Music_Covers/placeholder.png" alt="cover">
+
+        <div class="nso-body">
+          <div class="nso-title" id="track-title">Loading...</div>
+          <div class="nso-sub">Created by <span id="track-artist"></span></div>
+
+          <div class="nso-bar-row">
+            <input type="range" id="seekBar" value="0" min="0" max="100" step="0.1">
+          </div>
+
+          <div class="nso-controls-row">
+            <div class="nso-controls">
+              <button id="prevBtn" title="previous">⏮</button>
+              <button id="playBtn" title="play">▶</button>
+              <button id="nextBtn" title="next">⏭</button>
+              <button id="loopBtn" title="repeat playlist">🔁</button>
+            </div>
+            <div class="nso-time"><span id="curTime">00:00</span> / <span id="durTime">00:00</span></div>
+          </div>
+        </div>
+      </div>
+
+      <audio id="audio" preload="metadata"></audio>
+    </section>
 
   </main>
 </div>
@@ -710,6 +803,89 @@
   }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
 
   sections.forEach(s => observer.observe(s));
+
+  // ---------- Music Player ----------
+  // Add one entry per song here. Put the mp3 in a "tracks/" folder in your
+  // repo and the cover art in "Music_Covers/" 
+  const playlist = [
+    {
+      title: "Mice on venus",
+      artist: "C418",
+      src: "tracks/mice_on_venus.mp3",
+      art: "Music_Covers/minecraft.jpg"
+    },
+        {
+      title: "Minecraft",
+      artist: "C418",
+      src: "tracks/Minecraft.mp3",
+      art: "Music_Covers/minecraft.jpg"
+    },
+    // { title: "Song Name", artist: "Artist", src: "tracks/file.mp3", art: "Music_Covers/cover.png" },
+  ];
+
+  let trackIndex = 0;
+  let loopPlaylist = true;
+
+  const audio = document.getElementById('audio');
+  const playBtn = document.getElementById('playBtn');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const loopBtn = document.getElementById('loopBtn');
+  const seekBar = document.getElementById('seekBar');
+  const curTime = document.getElementById('curTime');
+  const durTime = document.getElementById('durTime');
+  const trackArt = document.getElementById('track-art');
+  const trackTitle = document.getElementById('track-title');
+  const trackArtist = document.getElementById('track-artist');
+
+  function fmt(t){
+    if (isNaN(t)) return "00:00";
+    const m = Math.floor(t / 60).toString().padStart(2, '0');
+    const s = Math.floor(t % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  function loadTrack(i, autoplay){
+    if (playlist.length === 0) return;
+    trackIndex = (i + playlist.length) % playlist.length;
+    const t = playlist[trackIndex];
+    audio.src = t.src;
+    trackArt.src = t.art;
+    trackTitle.textContent = t.title;
+    trackArtist.textContent = t.artist;
+    if (autoplay) { audio.play(); playBtn.textContent = '⏸'; }
+    else { playBtn.textContent = '▶'; }
+  }
+
+  playBtn.addEventListener('click', () => {
+    if (audio.paused) { audio.play(); playBtn.textContent = '⏸'; }
+    else { audio.pause(); playBtn.textContent = '▶'; }
+  });
+
+  prevBtn.addEventListener('click', () => loadTrack(trackIndex - 1, true));
+  nextBtn.addEventListener('click', () => loadTrack(trackIndex + 1, true));
+
+  audio.addEventListener('ended', () => {
+    if (trackIndex === playlist.length - 1 && !loopPlaylist) return;
+    loadTrack(trackIndex + 1, true);
+  });
+
+  loopBtn.addEventListener('click', () => {
+    loopPlaylist = !loopPlaylist;
+    loopBtn.classList.toggle('active', loopPlaylist);
+  });
+  loopBtn.classList.add('active');
+
+  audio.addEventListener('loadedmetadata', () => { durTime.textContent = fmt(audio.duration); });
+  audio.addEventListener('timeupdate', () => {
+    seekBar.value = (audio.currentTime / audio.duration) * 100 || 0;
+    curTime.textContent = fmt(audio.currentTime);
+  });
+  seekBar.addEventListener('input', () => {
+    audio.currentTime = (seekBar.value / 100) * audio.duration;
+  });
+
+  if (playlist.length > 0) loadTrack(0, false);
 </script>
 
 </body>
