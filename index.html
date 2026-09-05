@@ -6,67 +6,178 @@
 <title>Keko's Home</title>
 <style>
   :root{
-    --ink:#1C1C1D;
-    --panel:#242425;
-    --card:#242425;
-    --card-border:#3a3a3c;
-    --paper:#ffffff;
-    --paper-dim:#657383;
-    --teal:#657383;
-    --amber:#657383;
-    --thread:#3a3a3c;
+    --night:#0b0e1a;
+    --night2:#111530;
+    --panel:#151a35;
+    --panel-border:#2c3563;
+    --moon:#fdf6d8;
+    --moon-glow:#f3e6a8;
+    --star:#ffffff;
+    --text:#dfe3ff;
+    --text-dim:#8b91c4;
+    --link:#8fd3ff;
+    --link-hover:#ffe37a;
+    --pixel:'Press Start 2P', monospace;
+    --mono:'Space Mono', monospace;
+
+    /* No Colours, just added the boarder of the Link Boxex */
+    --thread: var(--panel-border);
+    --teal: var(--link);
+    --card: var(--panel);
+    --card-border: var(--panel-border);
+    --paper: var(--text);
+    --paper-dim: var(--text-dim);
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
     margin:0;
-    background:var(--ink);
-    color:var(--paper);
-    font-family:monospace, monospace;
-    line-height:1.3;
+    background:var(--night);
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:15px;
+    line-height:1.6;
     position:relative;
     overflow-x:hidden;
   }
-  a{color:inherit;}
+  a{color:var(--link);text-decoration:none;border-bottom:1px dotted var(--link);}
+  a:hover{color:var(--link-hover);border-color:var(--link-hover);}
 
-  /* ---------- background animation ---------- */
-  #stars{
-    position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    pointer-events:none;
-    z-index:0;
+  /* ---------- Starsified ---------- */
+  #stars, #stars2, #stars3{
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    pointer-events:none; z-index:0;
   }
   .star{
     position:absolute;
-    background:var(--paper-dim);
+    background:var(--star);
     border-radius:50%;
     animation:twinkle 3s infinite ease-in-out;
   }
   @keyframes twinkle{
-    0%,100%{opacity:.12;}
-    50%{opacity:.85;}
-  }
-  .glow{
-    position:fixed;
-    top:-120px; right:-120px;
-    width:380px; height:380px;
-    border-radius:50%;
-    background:radial-gradient(circle at 40% 40%, rgba(101,115,131,.35), rgba(101,115,131,0) 70%);
-    z-index:0;
-    pointer-events:none;
-    animation:drift 12s ease-in-out infinite;
-  }
-  @keyframes drift{
-    0%,100%{transform:translate(0,0);}
-    50%{transform:translate(-30px,40px);}
+    0%,100%{opacity:.2;}
+    50%{opacity:1;}
   }
 
-  /* content sits above the animated background */
-  header, .wrap, footer{
+  .moon{
+    position:fixed;
+    top:60px; right:80px;
+    width:90px; height:90px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, var(--moon), var(--moon-glow) 70%);
+    box-shadow:0 0 40px 10px rgba(243,230,168,.35), 0 0 90px 30px rgba(243,230,168,.12);
+    z-index:0;
+    animation:float 6s ease-in-out infinite;
+  }
+  .moon::before, .moon::after{
+    content:'';
+    position:absolute;
+    border-radius:50%;
+    background:rgba(180,165,120,.35);
+  }
+  .moon::before{width:14px;height:14px;top:20px;left:18px;}
+  .moon::after{width:9px;height:9px;top:50px;left:55px;}
+  @keyframes float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-14px);}
+  }
+  @media (max-width:600px){
+    .moon{
+      top:20px;
+      right:20px;
+      width:44px;
+      height:44px;
+      box-shadow:0 0 18px 5px rgba(243,230,168,.25), 0 0 40px 14px rgba(243,230,168,.08);
+      opacity:.6;
+    }
+    .moon::before{width:7px;height:7px;top:10px;left:9px;}
+    .moon::after{width:5px;height:5px;top:25px;left:27px;}
+  }
+
+  /* ---------- Lay ---------- */
+  .page{
     position:relative;
     z-index:1;
+    max-width:920px;
+    margin:0 auto;
+    padding:48px 24px 100px;
+    display:grid;
+    grid-template-columns:1fr 220px;
+    gap:36px;
   }
+
+  header.hero{
+    grid-column:1 / -1;
+    text-align:center;
+    padding:20px 0 30px;
+    border-bottom:1px dashed var(--panel-border);
+    margin-bottom:10px;
+  }
+  header.hero .site-title{
+    font-family:var(--pixel);
+    font-size:22px;
+    color:var(--moon);
+    text-shadow:0 0 12px rgba(243,230,168,.5);
+    margin:0 0 10px;
+    letter-spacing:1px;
+  }
+  header.hero nav{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  header.hero nav a{margin:0 8px;border:none;}
+  header.hero nav a:hover{text-decoration:underline;}
+
+  main{min-width:0;}
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:6px;
+    padding:22px 26px;
+    margin-bottom:28px;
+  }
+  .panel h2{
+    font-family:var(--pixel);
+    font-size:14px;
+    color:var(--moon);
+    margin:0 0 16px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .panel h2::before{content:'☾';color:var(--moon-glow);}
+
+  .welcome-blurb p{
+    margin:0 0 12px;
+    color:var(--text);
+  }
+  .welcome-blurb .stamp{
+    font-size:12px;
+    color:var(--text-dim);
+    font-style:italic;
+  }
+
+  ul.facts{
+    list-style:none;
+    padding:0;
+    margin:14px 0 0;
+  }
+  ul.facts li{
+    padding:6px 0 6px 20px;
+    position:relative;
+    color:var(--text);
+    font-size:14px;
+  }
+  ul.facts li::before{
+    content:'✦';
+    position:absolute;
+    left:0;
+    color:var(--moon-glow);
+    font-size:12px;
+  }
+
 
   /* ---------- Header ---------- */
   header{
@@ -108,7 +219,7 @@
     font-style:italic;
   }
 
-  /* ---------- Layout ---------- */
+  /* ---------- LayTwin ---------- */
   /* Nav is currently commented out, so .wrap is a plain block (not a grid)
      to keep it aligned with header. If you bring the nav back, restore:
      display:grid; grid-template-columns:220px 1fr; gap:0;
@@ -219,15 +330,12 @@
     border-radius:8px;
     padding:16px 18px;
     text-decoration:none;
-    transition:border-color .15s ease, transform .2s ease, background .15s ease, box-shadow .2s ease;
-    position:relative;
+    transition:border-color .15s ease, transform .15s ease, background .15s ease;
   }
   .card:hover{
     border-color:var(--teal);
     background:#212938;
-    transform:scale(1.06);
-    box-shadow:0 12px 26px rgba(0,0,0,.45);
-    z-index:5;
+    transform:translateY(-2px);
   }
   .card-top{
     display:flex;
@@ -304,6 +412,40 @@
   }
   footer a{color:var(--teal);text-decoration:none;}
   footer a:hover{text-decoration:underline;}
+  
+  .player-card{
+  background:var(--card);
+  border:1px solid var(--card-border);
+  border-radius:8px;
+  padding:14px 16px;
+  max-width:360px;
+}
+.player-label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-family:monospace,monospace;
+  font-size:13px;
+  color:var(--paper-dim);
+  margin-bottom:10px;
+}
+.player-label .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--teal);flex-shrink:0;
+}
+.player-frame{
+  position:relative;
+  width:100%;
+  padding-top:56.25%; /* 16:9 aspect ratio */
+  border-radius:6px;
+  overflow:hidden;
+}
+.player-frame iframe{
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  border:0;
+}
 
   @media (max-width:860px){
     nav.index{
@@ -328,53 +470,26 @@
 <div id="stars"></div>
 <div class="glow"></div>
 
-<div id="link-preview">
-  <img id="link-preview-img" alt="">
-  <div class="lp-label" id="link-preview-label"></div>
-</div>
-
 <header>
-  <div class="kicker">// personal drawer — bookmarks &amp; backups</div>
+  <div class="kicker">// Keko's personal — bookmarks &amp; backups</div>
   <h1>Welcome, My Friend...</h1>
-  <p class="sub">This is Keko's website — personal stuff to share, plus bookmarks and a backup of K3nji's home page. Every link opens in a new tab.</p>
-  <p class="note">Don't think it's a copy of K3nji's website — it's only for personal stuff to share, or personal bookmarks and a backup of K3nji's home website. (With no hate)</p>
+  <p class="sub">This is Keko's website — personal stuff to share, plus bookmarks. Every link opens in a new tab.</p>
+  <p class="note"><i>"more to come <del>soon</del>..."</i></p>
 </header>
 
 <div class="wrap">
-<!--
-  <nav class="index" id="indexNav">
-    <div class="drawer-label">Drawers</div>
-    <ol>
-      <li><a href="#people">People &amp; Community</a></li>
-      <li><a href="#software">Apps &amp; Software</a></li>
-      <li><a href="#games">Games I Love</a></li>
-      <li><a href="#elsewhere">Elsewhere</a></li>
-    </ol>
-  </nav>
--->
   <main>
-    
 
-<script src="https://keepandroidopen.org/banner.js?link=https://keepandroidopen.org/&size=minimal&hidebutton=off"></script>
-
-    
-    <!-- PEOPLE -->
+    <!-- PEOPLE & COMMUNITY -->
     <section class="category" id="people">
       <div class="cat-head">
-        <span class="cat-num">01</span>
         <h2>People &amp; Community</h2>
-        <span class="cat-count">people worth following</span>
+        <span class="cat-count">People Worth Following</span>
       </div>
       <div class="grid">
-        <!--    "Format btw"
-        <a class="card" href="(Link)" target="_blank" rel="noopener noreferrer">
-          <div class="card-top"><span class="card-title">(Title)<span class="arrow">↗</span></span></div>
-          <div class="card-desc">(Details)</div>
-        </a>
-        -->
         <a class="card" href="https://k3nji.qzz.io/" target="_blank" rel="noopener noreferrer" data-preview="previews/k3nji.png">
           <div class="card-top"><span class="card-title">k3nji Website<span class="arrow">↗</span></span></div>
-          <div class="card-desc">Real Man for me!!! (i don't have to forget about this guy but i can't share the actual profile &lt;/3)</div>
+          <div class="card-desc">Great Info</div>
         </a>
         <a class="card" href="https://daniel.micay.dev/" target="_blank" rel="noopener noreferrer" data-preview="previews/daniel-micay.png">
           <div class="card-top"><span class="card-title">Daniel Micay <span class="arrow">↗</span></span></div>
@@ -389,21 +504,19 @@
           <div class="card-desc">Developer, creator of the OldTwitter extension</div>
         </a>
         <a class="card" href="https://yearofthelinuxdesktop.net/" target="_blank" rel="noopener noreferrer" data-preview="previews/year-of-the-linux-desktop.png">
-          <div class="card-top"><span class="card-title">Year of the Linux Desktop <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title">Year Of Linux Desktop <span class="arrow">↗</span></span></div>
           <div class="card-desc">Comprehensive GNU/Linux overview for beginners</div>
         </a>
       </div>
     </section>
 
     <!-- Wiki And Guides -->
-        <section class="category" id="Wiki">
+    <section class="category" id="Wiki">
       <div class="cat-head">
-        <span class="cat-num">02</span>
         <h2>Wiki &amp; Guides</h2>
-        <span class="cat-count">Useful Resources To Find (As for k3nji's words, reading is important rather than slapping your head 🙂‍↕️)</span>
+        <span class="cat-count">Useful Resources To Find</span>
       </div>
       <div class="grid">
-       
                <a class="card" href="https://www.wikipedia.org/" target="_blank" rel="noopener noreferrer" data-preview="previews/fmhy.png">
           <div class="card-top"><span class="card-title">Wikipedia <span class="arrow">↗</span></span></div>
           <div class="card-desc">Everything what you need to know!</div>
@@ -424,24 +537,16 @@
           <div class="card-top"><span class="card-title">The Hitchhiker's Guide <span class="arrow">↗</span></span></div>
           <div class="card-desc">Privacy and anonymity guide</div>
         </a>
-
       </div>
     </section>
 
     <!-- SOFTWARE -->
     <section class="category" id="software">
       <div class="cat-head">
-        <span class="cat-num">03</span>
         <h2>Apps &amp; Software</h2>
         <span class="cat-count">most-used tools, privacy stuff too</span>
       </div>
       <div class="grid">
-        <!-- "Format"
-        <a class="card" href="(Link)" target="_blank" rel="noopener noreferrer">
-          <div class="card-top"><span class="card-title">(Name of certain thing)<span class="arrow">↗</span></span></div>
-          <div class="card-desc">(Details)</div>
-        </a>
-        -->
         <a class="card" href="https://www.fedoraproject.org/" target="_blank" rel="noopener noreferrer" data-preview="previews/fedora.png">
           <div class="card-top"><span class="card-title">Fedora Linux <span class="arrow">↗</span></span></div>
           <div class="card-desc">Really stable, and KDE is the best choice for me</div>
@@ -505,9 +610,7 @@
     <!-- GAMES -->
     <section class="category" id="games">
       <div class="cat-head">
-        <span class="cat-num">04</span>
         <h2>Games I Love</h2>
-        <span class="cat-count">what's in rotation</span>
       </div>
       <div class="grid">
         <a class="card" href="https://www.minecraft.net" target="_blank" rel="noopener noreferrer" data-preview="previews/minecraft.png">
@@ -516,11 +619,15 @@
         </a>
         <a class="card" href="https://deltarune.com/" target="_blank" rel="noopener noreferrer" data-preview="previews/deltarune.png">
           <div class="card-top"><span class="card-title">Deltarune <span class="arrow">↗</span></span></div>
-          <div class="card-desc">RPG, humourous game — see you in the further changes...</div>
+          <div class="card-desc">RPG, humourous game. With Cool SoundTracks</div>
+        </a>
+        <a class="card" href="https://www.undertale.com/" target="_blank" rel="noopener noreferrer" data-preview="previews/undertale.png">
+          <div class="card-top"><span class="card-title">Undertale <span class="arrow">↗</span></span></div>
+          <div class="card-desc">Indie-Game Made By Toby Fox - With Cool SoundTracks</div>
         </a>
         <a class="card" href="https://www.virustotal.com/" target="_blank" rel="noopener noreferrer" data-preview="previews/virustotal.png">
           <div class="card-top"><span class="card-title">VirusTotal <span class="arrow">↗</span></span></div>
-          <div class="card-desc">File analysis and scanning And Even Website scanner</div>
+          <div class="card-desc">One Of The Best File analysis & scanning And Even Website scanner</div>
         </a>
       </div>
     </section>
@@ -528,26 +635,46 @@
     <!-- ELSEWHERE -->
     <section class="category" id="elsewhere">
       <div class="cat-head">
-        <span class="cat-num">05</span>
         <h2>Elsewhere</h2>
-        <span class="cat-count">find me around</span>
+        <span class="cat-count">Do not find me</span>
       </div>
       <div class="social-row">
         <a class="social-card" href="https://twitter.com/kekobadehere" target="_blank" rel="noopener noreferrer" data-preview="previews/twitter.png"><span class="dot"></span>Twitter / X</a>
         <a class="social-card" href="https://github.com/kekobade" target="_blank" rel="noopener noreferrer" data-preview="previews/github.png"><span class="dot"></span>GitHub</a>
-        <a class="social-card" href="https://youtu.be/dDqMu5VnuDs?si=OSWz5dALE5lgI6Id" target="_blank" rel="noopener noreferrer" data-preview="previews/dogsong.png"><span class="dot"></span>Dogsong</a>
       </div>
     </section>
+
+    <!-- PLayer -->
+         <section class="category" id="Random-PLayer">
+      <div class="cat-head">
+        <h2>PLayer</h2>
+        <span class="cat-count">Random Vids</span>
+      </div>
+
+    <div class="player-card">
+  <div class="player-label"><span class="dot"></span>Dogsong</div>
+  <div class="player-frame">
+    <iframe
+      src="https://www.youtube.com/embed/dDqMu5VnuDs"
+      title="Dogsong"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      loading="lazy">
+    </iframe>
+  </div>
+</div>
+
 
   </main>
 </div>
 
 <footer>
-  Every link on this page opens in a new tab (target="_blank"). Backup of <a href="https://kekobade.github.io/keko/" target="_blank" rel="noopener noreferrer">Keko's original page</a>.
+  Note For Nerds: Every link on this page opens in a new tab (target="_blank"). Backup of <a href="https://kekobade.github.io/keko/" target="_blank" rel="noopener noreferrer">Keko's original page</a>.
 </footer>
 
 <script>
-  // starfield background
+  // starFunction background
   const starsContainer = document.getElementById('stars');
   const STAR_COUNT = 90;
   for (let i = 0; i < STAR_COUNT; i++) {
@@ -563,6 +690,25 @@
     starsContainer.appendChild(s);
   }
 
+  // active-section highlight in the nav (safe to leave in even while nav is commented out)
+  const sections = document.querySelectorAll('section.category');
+  const navLinks = document.querySelectorAll('nav.index a');
+  const map = {};
+  navLinks.forEach(l => map[l.getAttribute('href').slice(1)] = l);
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const link = map[entry.target.id];
+      if (!link) return;
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
 
 </body>
 </html>
