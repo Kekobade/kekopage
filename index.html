@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -38,6 +38,7 @@
     font-size:15px;
     line-height:1.6;
     position:relative;
+    isolation:isolate;
     overflow-x:hidden;
   }
   a{color:var(--link);text-decoration:none;border-bottom:1px dotted var(--link);}
@@ -46,7 +47,7 @@
   /* ---------- Starsified ---------- */
   #stars, #stars2, #stars3{
     position:fixed; top:0; left:0; width:100%; height:100%;
-    pointer-events:none; z-index:0;
+    pointer-events:none; z-index:-1;
   }
   .star{
     position:absolute;
@@ -61,37 +62,28 @@
 
   .moon{
     position:fixed;
-    top:60px; right:80px;
-    width:90px; height:90px;
+    top:-60px; right:-60px;
+    width:220px; height:220px;
     border-radius:50%;
-    background:radial-gradient(circle at 35% 35%, var(--moon), var(--moon-glow) 70%);
-    box-shadow:0 0 40px 10px rgba(243,230,168,.35), 0 0 90px 30px rgba(243,230,168,.12);
-    z-index:0;
-    animation:float 6s ease-in-out infinite;
+    background:radial-gradient(circle at 40% 40%, var(--moon) 0%, var(--moon-glow) 45%, rgba(243,230,168,0) 72%);
+    filter:blur(2px);
+    opacity:.55;
+    z-index:-1;
+    pointer-events:none;
+    animation:float 8s ease-in-out infinite;
   }
-  .moon::before, .moon::after{
-    content:'';
-    position:absolute;
-    border-radius:50%;
-    background:rgba(180,165,120,.35);
-  }
-  .moon::before{width:14px;height:14px;top:20px;left:18px;}
-  .moon::after{width:9px;height:9px;top:50px;left:55px;}
   @keyframes float{
     0%,100%{transform:translateY(0);}
-    50%{transform:translateY(-14px);}
+    50%{transform:translateY(-10px);}
   }
   @media (max-width:600px){
     .moon{
-      top:20px;
-      right:20px;
-      width:44px;
-      height:44px;
-      box-shadow:0 0 18px 5px rgba(243,230,168,.25), 0 0 40px 14px rgba(243,230,168,.08);
-      opacity:.6;
+      top:-30px;
+      right:-30px;
+      width:110px;
+      height:110px;
+      opacity:.4;
     }
-    .moon::before{width:7px;height:7px;top:10px;left:9px;}
-    .moon::after{width:5px;height:5px;top:25px;left:27px;}
   }
 
   /* ---------- Lay ---------- */
@@ -181,6 +173,8 @@
 
   /* ---------- Header ---------- */
   header{
+    position:relative;
+    z-index:1;
     padding:64px 32px 40px;
     max-width:1180px;
     margin:0 auto;
@@ -221,6 +215,8 @@
 
   /* ---------- LayTwin ---------- */
   .wrap{
+    position:relative;
+    z-index:1;
     max-width:1180px;
     margin:0 auto;
   }
@@ -344,6 +340,16 @@
     font-weight:600;
     font-size:14.5px;
     color:var(--paper);
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .card-icon{
+    width:16px;
+    height:16px;
+    border-radius:3px;
+    flex-shrink:0;
+    background:var(--night2);
   }
   .card-title .arrow{
     display:inline-block;
@@ -396,8 +402,25 @@
     background:var(--teal);
     flex-shrink:0;
   }
+  .social-card img{
+    width:16px;
+    height:16px;
+    border-radius:3px;
+    flex-shrink:0;
+  }
+  .social-card .handle{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .social-card .handle small{
+    color:var(--text-dim);
+    font-size:11px;
+  }
 
   footer{
+    position:relative;
+    z-index:1;
     max-width:1180px;
     margin:0 auto;
     padding:40px 32px 60px;
@@ -408,6 +431,35 @@
   }
   footer a{color:var(--teal);text-decoration:none;}
   footer a:hover{text-decoration:underline;}
+
+  /* ---------- Edition seal ---------- */
+  .kicker-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+  }
+  .kicker-row .kicker{
+    margin-bottom:0;
+  }
+  .edition-seal{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:5px 12px;
+    border-radius:20px;
+    border:1px dashed var(--moon-glow);
+    color:var(--moon-glow);
+    font-family:monospace,monospace;
+    font-size:11px;
+    letter-spacing:.06em;
+    white-space:nowrap;
+  }
+  .edition-seal strong{
+    color:var(--moon);
+  }
   
   .player-card{
   background:var(--card);
@@ -443,6 +495,19 @@
   border:0;
 }
 
+.glow{
+  position:fixed;
+  top:-20%;
+  right:-10%;
+  width:60vw;
+  height:60vw;
+  max-width:700px;
+  max-height:700px;
+  background:radial-gradient(circle, rgba(243,230,168,.08) 0%, rgba(243,230,168,0) 70%);
+  pointer-events:none;
+  z-index:-1;
+}
+
   @media (max-width:860px){
     nav.index{
       position:static;
@@ -464,10 +529,14 @@
 <body>
 
 <div id="stars"></div>
+<div class="moon"></div>
 <div class="glow"></div>
 
 <header>
-  <div class="kicker">// Keko's personal — bookmarks &amp; backups</div>
+  <div class="kicker-row">
+    <div class="kicker">// Keko's personal — bookmarks &amp; backups</div>
+    <div class="edition-seal">☾ Great Info</strong></div>
+  </div>
   <h1>Welcome, My Friend...</h1>
   <p class="sub">This is Keko's website — personal stuff to share, plus bookmarks. Every link opens in a new tab.</p>
   <p class="note"><i>"more to come <del>soon</del>..."</i></p>
@@ -486,23 +555,23 @@
       </div>
       <div class="grid">
         <a class="card" href="https://k3nji.qzz.io/" target="_blank" rel="noopener noreferrer" data-preview="previews/k3nji.png">
-          <div class="card-top"><span class="card-title">k3nji Website<span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=k3nji.qzz.io" alt="" loading="lazy" onerror="this.style.display='none'">k3nji Website<span class="arrow">↗</span></span></div>
           <div class="card-desc">Great Info</div>
         </a>
         <a class="card" href="https://daniel.micay.dev/" target="_blank" rel="noopener noreferrer" data-preview="previews/daniel-micay.png">
-          <div class="card-top"><span class="card-title">Daniel Micay <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=daniel.micay.dev" alt="" loading="lazy" onerror="this.style.display='none'">Daniel Micay <span class="arrow">↗</span></span></div>
           <div class="card-desc">Security researcher, founder of GrapheneOS</div>
         </a>
         <a class="card" href="https://x.com/ni5arga" target="_blank" rel="noopener noreferrer" data-preview="previews/ni5arga.png">
-          <div class="card-top"><span class="card-title">ni5agrga <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=x.com" alt="" loading="lazy" onerror="this.style.display='none'">ni5agrga <span class="arrow">↗</span></span></div>
           <div class="card-desc">Software engineer, hacker, security researcher</div>
         </a>
         <a class="card" href="https://dimden.dev/" target="_blank" rel="noopener noreferrer" data-preview="previews/dimden.png">
-          <div class="card-top"><span class="card-title">dimden <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=dimden.dev" alt="" loading="lazy" onerror="this.style.display='none'">dimden <span class="arrow">↗</span></span></div>
           <div class="card-desc">Developer, creator of the OldTwitter extension</div>
         </a>
         <a class="card" href="https://yearofthelinuxdesktop.net/" target="_blank" rel="noopener noreferrer" data-preview="previews/year-of-the-linux-desktop.png">
-          <div class="card-top"><span class="card-title">Year Of Linux Desktop <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=yearofthelinuxdesktop.net" alt="" loading="lazy" onerror="this.style.display='none'">Year Of Linux Desktop <span class="arrow">↗</span></span></div>
           <div class="card-desc">Comprehensive GNU/Linux overview for beginners</div>
         </a>
       </div>
@@ -516,27 +585,27 @@
       </div>
       <div class="grid">
                <a class="card" href="https://www.wikipedia.org/" target="_blank" rel="noopener noreferrer" data-preview="previews/fmhy.png">
-          <div class="card-top"><span class="card-title">Wikipedia <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=wikipedia.org" alt="" loading="lazy" onerror="this.style.display='none'">Wikipedia <span class="arrow">↗</span></span></div>
           <div class="card-desc">Everything what you need to know!</div>
         </a>      
         <a class="card" href="https://fmhy.xyz/" target="_blank" rel="noopener noreferrer" data-preview="previews/fmhy.png">
-          <div class="card-top"><span class="card-title">FMHY <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=fmhy.xyz" alt="" loading="lazy" onerror="this.style.display='none'">FMHY <span class="arrow">↗</span></span></div>
           <div class="card-desc">Community-maintained megawiki</div>
           </a>
         <a class="card" href="https://wispydocs.pages.dev/" target="_blank" rel="noopener noreferrer" data-preview="previews/wispy-docs.png">
-          <div class="card-top"><span class="card-title">Wispy Docs <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=wispydocs.pages.dev" alt="" loading="lazy" onerror="this.style.display='none'">Wispy Docs <span class="arrow">↗</span></span></div>
           <div class="card-desc">Simple guides</div>
         </a>
         <a class="card" href="https://eylenburg.github.io/" target="_blank" rel="noopener noreferrer" data-preview="previews/eylenburg.png">
-          <div class="card-top"><span class="card-title">Eylenburg <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=eylenburg.github.io" alt="" loading="lazy" onerror="this.style.display='none'">Eylenburg <span class="arrow">↗</span></span></div>
           <div class="card-desc">Tech website</div>
         </a>
         <a class="card" href="https://anonymousplanet.net/" target="_blank" rel="noopener noreferrer" data-preview="previews/anonymous-planet.png">
-          <div class="card-top"><span class="card-title">The Hitchhiker's Guide <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=anonymousplanet.net" alt="" loading="lazy" onerror="this.style.display='none'">The Hitchhiker's Guide <span class="arrow">↗</span></span></div>
           <div class="card-desc">Privacy and anonymity guide</div>
         </a>
        <a class="card" href="https://guardianproject.info/" target="_blank" rel="noopener noreferrer" data-preview="previews/guardian-project.png">
-          <div class="card-top"><span class="card-title">Guardian Project <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=guardianproject.info" alt="" loading="lazy" onerror="this.style.display='none'">Guardian Project <span class="arrow">↗</span></span></div>
           <div class="card-desc">Privacy-focused apps for Android</div>
         </a>
       </div>
@@ -550,97 +619,97 @@
       </div>
       <div class="grid">
         <a class="card" href="https://www.fedoraproject.org/" target="_blank" rel="noopener noreferrer" data-preview="previews/fedora.png">
-          <div class="card-top"><span class="card-title">Fedora Linux <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=fedoraproject.org" alt="" loading="lazy" onerror="this.style.display='none'">Fedora Linux <span class="arrow">↗</span></span></div>
           <div class="card-desc">Really stable, and KDE is the best choice for me</div>
         </a>
         <a class="card" href="https://www.qubes-os.org/" target="_blank" rel="noopener noreferrer" data-preview="previews/qubes-os.png">
-          <div class="card-top"><span class="card-title">Qubes OS <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=qubes-os.org" alt="" loading="lazy" onerror="this.style.display='none'">Qubes OS <span class="arrow">↗</span></span></div>
           <div class="card-desc">High security level distro</div>
         </a>
         <a class="card" href="https://signal.org/" target="_blank" rel="noopener noreferrer" data-preview="previews/signal.png">
-          <div class="card-top"><span class="card-title">Signal <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=signal.org" alt="" loading="lazy" onerror="this.style.display='none'">Signal <span class="arrow">↗</span></span></div>
           <div class="card-desc">Private messenger with end-to-end encryption</div>
         </a>
         <a class="card" href="https://librewolf.net/" target="_blank" rel="noopener noreferrer" data-preview="previews/librewolf.png">
-          <div class="card-top"><span class="card-title">LibreWolf <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=librewolf.net" alt="" loading="lazy" onerror="this.style.display='none'">LibreWolf <span class="arrow">↗</span></span></div>
           <div class="card-desc">Hardened Firefox for desktop</div>
         </a>
         <a class="card" href="https://www.wireguard.com/" target="_blank" rel="noopener noreferrer" data-preview="previews/wireguard.png">
-          <div class="card-top"><span class="card-title">WireGuard <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=wireguard.com" alt="" loading="lazy" onerror="this.style.display='none'">WireGuard <span class="arrow">↗</span></span></div>
           <div class="card-desc">VPN protocol, an alternative to OpenVPN and IPsec</div>
         </a>
         <a class="card" href="https://mullvad.net/en" target="_blank" rel="noopener noreferrer" data-preview="previews/mullvad.png">
-          <div class="card-top"><span class="card-title">Mullvad <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=mullvad.net" alt="" loading="lazy" onerror="this.style.display='none'">Mullvad <span class="arrow">↗</span></span></div>
           <div class="card-desc">Privacy-focused browser and VPN service</div>
         </a>
         <a class="card" href="https://protonvpn.com/" target="_blank" rel="noopener noreferrer" data-preview="previews/protonvpn.png">
-          <div class="card-top"><span class="card-title">ProtonVPN <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=protonvpn.com" alt="" loading="lazy" onerror="this.style.display='none'">ProtonVPN <span class="arrow">↗</span></span></div>
           <div class="card-desc">Free VPN for emergency purposes</div>
         </a>
         <a class="card" href="https://ha.mr/" target="_blank" rel="noopener noreferrer" data-preview="previews/ha-mr.png">
-          <div class="card-top"><span class="card-title">Link Compressor <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=ha.mr" alt="" loading="lazy" onerror="this.style.display='none'">Link Compressor <span class="arrow">↗</span></span></div>
           <div class="card-desc">Compressing and making QR scanners into small bytes</div>
         </a>
         <a class="card" href="https://www.clementine-player.org/" target="_blank" rel="noopener noreferrer" data-preview="previews/clementine-player.png">
-          <div class="card-top"><span class="card-title">Clementine-player<span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=clementine-player.org" alt="" loading="lazy" onerror="this.style.display='none'">Clementine-player<span class="arrow">↗</span></span></div>
           <div class="card-desc">Music player for Windows/Linux</div>
         </a>
         <a class="card" href="https://play.google.com/store/apps/details?id=in.krosbits.musicolet&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" data-preview="previews/musicolet.png">
-          <div class="card-top"><span class="card-title">musicolet Music Player<span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=play.google.com" alt="" loading="lazy" onerror="this.style.display='none'">musicolet Music Player<span class="arrow">↗</span></span></div>
           <div class="card-desc">Music player for Android, simple to use and VLC type of music player &lt;3</div>
         </a>
         <a class="card" href="https://www.videolan.org/vlc/" target="_blank" rel="noopener noreferrer" data-preview="previews/vlc.png">
-          <div class="card-top"><span class="card-title">VLC Media Player<span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=videolan.org" alt="" loading="lazy" onerror="this.style.display='none'">VLC Media Player<span class="arrow">↗</span></span></div>
           <div class="card-desc">Media player for Windows/Linux/Android</div>
         </a>
         <a class="card" href="https://spicetify.app/" target="_blank" rel="noopener noreferrer" data-preview="previews/spicetify.png">
-          <div class="card-top"><span class="card-title">Spicetify<span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=spicetify.app" alt="" loading="lazy" onerror="this.style.display='none'">Spicetify<span class="arrow">↗</span></span></div>
           <div class="card-desc">The ultimate Spotify customization toolkit</div>
         </a>
         <a class="card" href="https://play.google.com/store/apps/details?id=ru.zdevs.zarchiver&hl=en_IN" target="_blank" rel="noopener noreferrer" data-preview="previews/zarchiver.png">
-          <div class="card-top"><span class="card-title">ZArchiver<span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=play.google.com" alt="" loading="lazy" onerror="this.style.display='none'">ZArchiver<span class="arrow">↗</span></span></div>
           <div class="card-desc">Best File archiver for Android (it's been 7-8 years using it &lt;3)</div>
         </a>
         <a class="card" href="https://freetubeapp.io/" target="_blank" rel="noopener noreferrer" data-preview="previews/freetube.png">
-          <div class="card-top"><span class="card-title">FreeTube<span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=freetubeapp.io" alt="" loading="lazy" onerror="this.style.display='none'">FreeTube<span class="arrow">↗</span></span></div>
           <div class="card-desc">Privacy-focused YouTube client for desktop</div>
         </a> 
       </div>
     </section>
 
     <!-- ANDROID APPS -->
-        <section class="category" id="software">
+        <section class="category" id="android">
       <div class="cat-head">
         <h2>Android Apps</h2>
         <span class="cat-count">Main Android Based Privacy Tools/Softwares/Apps (Zero stealing data)</span>
       </div>
       <div class="grid">
         <a class="card" href="https://f-droid.org/" target="_blank" rel="noopener noreferrer" data-preview="previews/fdroid.png">
-          <div class="card-top"><span class="card-title">F-Droid <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=f-droid.org" alt="" loading="lazy" onerror="this.style.display='none'">F-Droid <span class="arrow">↗</span></span></div>
           <div class="card-desc">FOSS App Store for Android</div>
         </a>
         <a class="card" href="https://revanced.app/" target="_blank" rel="noopener noreferrer" data-preview="previews/revanced.png">
-          <div class="card-top"><span class="card-title">Revanced <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=revanced.app" alt="" loading="lazy" onerror="this.style.display='none'">Revanced <span class="arrow">↗</span></span></div>
           <div class="card-desc">Enhanced version of popular apps with additional features</div>
         </a>
         <a class="card" href="https://microg.org/" target="_blank" rel="noopener noreferrer" data-preview="previews/microg.png">
-          <div class="card-top"><span class="card-title">MicroG <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=microg.org" alt="" loading="lazy" onerror="this.style.display='none'">MicroG <span class="arrow">↗</span></span></div>
           <div class="card-desc">Open-source implementation of Google Play Services (still uses google services, Sadly)</div>
         </a>
         <a class="card" href="https://github.com/MetrolistGroup/Metrolist" target="_blank" rel="noopener noreferrer" data-preview="previews/metrolist.png">
-          <div class="card-top"><span class="card-title">Metrolist <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=github.com" alt="" loading="lazy" onerror="this.style.display='none'">Metrolist <span class="arrow">↗</span></span></div>
           <div class="card-desc">Open-Source Music Player</div>
         </a>
         <a class="card" href="https://github.com/InfinityLoop1308/PipePipe" target="_blank" rel="noopener noreferrer" data-preview="previews/pipepipe.png">
-          <div class="card-top"><span class="card-title">PipePipe <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=github.com" alt="" loading="lazy" onerror="this.style.display='none'">PipePipe <span class="arrow">↗</span></span></div>
           <div class="card-desc">Open-Source YouTube Client</div>
         </a>
         <a class="card" href="https://github.com/Teskann/QuaX" target="_blank" rel="noopener noreferrer" data-preview="previews/quadx.png">
-          <div class="card-top"><span class="card-title">QuaX <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=github.com" alt="" loading="lazy" onerror="this.style.display='none'">QuaX <span class="arrow">↗</span></span></div>
           <div class="card-desc">Open-Source Twitter/X Client</div>
         </a>
         <a class="card" href="https://ironfoxoss.org/" target="_blank" rel="noopener noreferrer" data-preview="previews/ironfox.png">
-          <div class="card-top"><span class="card-title">IronFox <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=ironfoxoss.org" alt="" loading="lazy" onerror="this.style.display='none'">IronFox <span class="arrow">↗</span></span></div>
           <div class="card-desc">Hardened Firefox for Android</div>
         </a>
       </div>
@@ -654,19 +723,19 @@
       </div>
       <div class="grid">
         <a class="card" href="https://www.minecraft.net" target="_blank" rel="noopener noreferrer" data-preview="previews/minecraft.png">
-          <div class="card-top"><span class="card-title">Minecraft <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=minecraft.net" alt="" loading="lazy" onerror="this.style.display='none'">Minecraft <span class="arrow">↗</span></span></div>
           <div class="card-desc">Sandbox game, peaceful</div>
         </a>
         <a class="card" href="https://deltarune.com/" target="_blank" rel="noopener noreferrer" data-preview="previews/deltarune.png">
-          <div class="card-top"><span class="card-title">Deltarune <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=deltarune.com" alt="" loading="lazy" onerror="this.style.display='none'">Deltarune <span class="arrow">↗</span></span></div>
           <div class="card-desc">RPG, humourous game. With Cool SoundTracks</div>
         </a>
         <a class="card" href="https://www.undertale.com/" target="_blank" rel="noopener noreferrer" data-preview="previews/undertale.png">
-          <div class="card-top"><span class="card-title">Undertale <span class="arrow">↗</span></span></div>
-          <div class="card-desc">Indie-Game Made By Toby Fox - With Cool SoundTracks</div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=undertale.com" alt="" loading="lazy" onerror="this.style.display='none'">Undertale <span class="arrow">↗</span></span></div>
+          <div class="card-desc">Indie-Game Made By Toby Fox - With Cool Soundtracks</div>
         </a>
         <a class="card" href="https://www.virustotal.com/" target="_blank" rel="noopener noreferrer" data-preview="previews/virustotal.png">
-          <div class="card-top"><span class="card-title">VirusTotal <span class="arrow">↗</span></span></div>
+          <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=virustotal.com" alt="" loading="lazy" onerror="this.style.display='none'">VirusTotal <span class="arrow">↗</span></span></div>
           <div class="card-desc">One Of The Best File analysis & scanning And Even Website scanner</div>
         </a>
       </div>
@@ -679,8 +748,14 @@
         <span class="cat-count">Do not find me</span>
       </div>
       <div class="social-row">
-        <a class="social-card" href="https://twitter.com/kekobadehere" target="_blank" rel="noopener noreferrer" data-preview="previews/twitter.png"><span class="dot"></span>Twitter / X</a>
-        <a class="social-card" href="https://github.com/kekobade" target="_blank" rel="noopener noreferrer" data-preview="previews/github.png"><span class="dot"></span>GitHub</a>
+        <a class="social-card" href="https://twitter.com/kekobadehere" target="_blank" rel="noopener noreferrer" data-preview="previews/twitter.png">
+          <img src="https://www.google.com/s2/favicons?sz=64&domain=x.com" alt="" loading="lazy" onerror="this.style.display='none'">
+          <span class="handle">Twitter / X<small>@kekobadehere</small></span>
+        </a>
+        <a class="social-card" href="https://github.com/kekobade" target="_blank" rel="noopener noreferrer" data-preview="previews/github.png">
+          <img src="https://www.google.com/s2/favicons?sz=64&domain=github.com" alt="" loading="lazy" onerror="this.style.display='none'">
+          <span class="handle">GitHub<small>@kekobade</small></span>
+        </a>
       </div>
     </section>
 
@@ -696,7 +771,7 @@
       
 <div class="player-frame">
   <iframe
-    src="www.youtube.com/watch?v=FDNJDsJ_d_o"
+    src="https://www.youtube.com/embed/FDNJDsJ_d_o"
     title="ナイト・オブ・"
     frameborder="0"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
