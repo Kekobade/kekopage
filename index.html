@@ -329,6 +329,11 @@
     background:#212938;
     transform:translateY(-2px);
   }
+  .card.selected, .social-card.selected{
+    border-color:var(--link-hover);
+    background:#242a1f;
+    box-shadow:0 0 0 1px var(--link-hover);
+  }
   .card-top{
     display:flex;
     justify-content:space-between;
@@ -507,6 +512,61 @@
   pointer-events:none;
   z-index:-1;
 }
+
+  /* ---------- Keko's selection ---------- */
+  #marquee-box{
+    position:fixed;
+    border:1px solid var(--link-hover);
+    background:rgba(255,227,122,.12);
+    display:none;
+    pointer-events:none;
+    z-index:50;
+    border-radius:2px;
+  }
+  #selection-bar{
+    position:fixed;
+    left:50%;
+    bottom:24px;
+    transform:translate(-50%, 20px);
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:10px;
+    padding:10px 14px;
+    font-family:monospace,monospace;
+    font-size:13px;
+    color:var(--text);
+    box-shadow:0 8px 24px rgba(0,0,0,.35);
+    z-index:60;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .15s ease, transform .15s ease;
+  }
+  #selection-bar.visible{
+    opacity:1;
+    transform:translate(-50%, 0);
+    pointer-events:auto;
+  }
+  #selection-bar button{
+    font-family:monospace,monospace;
+    font-size:12.5px;
+    background:transparent;
+    color:var(--text);
+    border:1px solid var(--panel-border);
+    border-radius:6px;
+    padding:6px 12px;
+    cursor:pointer;
+  }
+  #selection-bar button:hover{
+    border-color:var(--teal);
+    color:var(--link-hover);
+  }
+  #selection-bar .open-btn{
+    border-color:var(--teal);
+    color:var(--link-hover);
+  }
 
   @media (max-width:860px){
     nav.index{
@@ -732,7 +792,7 @@
         </a>
         <a class="card" href="https://www.undertale.com/" target="_blank" rel="noopener noreferrer" data-preview="previews/undertale.png">
           <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=undertale.com" alt="" loading="lazy" onerror="this.style.display='none'">Undertale <span class="arrow">↗</span></span></div>
-          <div class="card-desc">Indie-Game Made By Toby Fox - With Cool Soundtracks</div>
+          <div class="card-desc">Indie-Game Made By Toby Fox - With Cool SoundTracks</div>
         </a>
         <a class="card" href="https://www.virustotal.com/" target="_blank" rel="noopener noreferrer" data-preview="previews/virustotal.png">
           <div class="card-top"><span class="card-title"><img class="card-icon" src="https://www.google.com/s2/favicons?sz=64&domain=virustotal.com" alt="" loading="lazy" onerror="this.style.display='none'">VirusTotal <span class="arrow">↗</span></span></div>
@@ -782,9 +842,19 @@
 </div>
  </section>
 
+  </main>
+</div>
+
 <footer>
   Note For Nerds: Every link on this page opens in a new tab (target="_blank"). Backup of <a href="https://kekobade.github.io/keko/" target="_blank" rel="noopener noreferrer">Keko's original page</a>.
 </footer>
+
+<div id="marquee-box"></div>
+<div id="selection-bar">
+  <span id="selection-count">0 selected</span>
+  <button class="open-btn" id="open-selected">Open all ↗</button>
+  <button id="clear-selected">Clear</button>
+</div>
 
 <script>
   // starFunction background
@@ -821,6 +891,108 @@
   }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
 
   sections.forEach(s => observer.observe(s));
+</script>
+
+<script>
+  // marquee (drag-to-select) navigation
+  const selectables = Array.from(document.querySelectorAll('.card, .social-card'));
+  const marqueeBox = document.getElementById('marquee-box');
+  const selectionBar = document.getElementById('selection-bar');
+  const selectionCount = document.getElementById('selection-count');
+  const openSelectedBtn = document.getElementById('open-selected');
+  const clearSelectedBtn = document.getElementById('clear-selected');
+
+  let startX = 0, startY = 0;
+  let dragging = false;
+  let suppressNextClick = false;
+  const DRAG_THRESHOLD = 6;
+
+  function getSelected(){
+    return selectables.filter(el => el.classList.contains('selected'));
+  }
+
+  function updateBar(){
+    const n = getSelected().length;
+    selectionCount.textContent = n + (n === 1 ? ' selected' : ' selected');
+    selectionBar.classList.toggle('visible', n > 0);
+  }
+
+  function clearSelection(){
+    selectables.forEach(el => el.classList.remove('selected'));
+    updateBar();
+  }
+
+  function updateMarqueeSelection(box){
+    selectables.forEach(el => {
+      const r = el.getBoundingClientRect();
+      const hit = !(r.right < box.left || r.left > box.right || r.bottom < box.top || r.top > box.bottom);
+      if (hit) el.classList.add('selected');
+    });
+    updateBar();
+  }
+
+  document.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    startX = e.clientX;
+    startY = e.clientY;
+    dragging = true;
+    suppressNextClick = false;
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (!marqueeBox.style.display || marqueeBox.style.display === 'none') {
+      if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) return;
+      marqueeBox.style.display = 'block';
+      suppressNextClick = true;
+    }
+    const left = Math.min(startX, e.clientX);
+    const top = Math.min(startY, e.clientY);
+    const width = Math.abs(dx);
+    const height = Math.abs(dy);
+    marqueeBox.style.left = left + 'px';
+    marqueeBox.style.top = top + 'px';
+    marqueeBox.style.width = width + 'px';
+    marqueeBox.style.height = height + 'px';
+    updateMarqueeSelection({ left, top, right: left + width, bottom: top + height });
+  });
+
+  document.addEventListener('mouseup', () => {
+    dragging = false;
+    marqueeBox.style.display = 'none';
+  });
+
+  document.addEventListener('click', (e) => {
+    if (suppressNextClick) {
+      e.preventDefault();
+      e.stopPropagation();
+      suppressNextClick = false;
+    }
+  }, true);
+
+  openSelectedBtn.addEventListener('click', () => {
+    getSelected().forEach((el, i) => {
+      setTimeout(() => window.open(el.href, '_blank', 'noopener'), i * 120);
+    });
+  });
+
+  clearSelectedBtn.addEventListener('click', clearSelection);
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.card, .social-card, #selection-bar')) return;
+    clearSelection();
+  });
+
+  window.addEventListener('blur', () => {
+    dragging = false;
+    marqueeBox.style.display = 'none';
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') clearSelection();
+  });
 </script>
 </body>
 </html>
